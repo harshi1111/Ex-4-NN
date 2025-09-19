@@ -1,8 +1,7 @@
-
-<H3>ENTER YOUR NAME</H3>
-<H3>ENTER YOUR REGISTER NO.</H3>
-<H3>EX. NO.4</H3>
-<H3>DATE:</H3>
+<H3>Name: HARSHITHA V</H3>
+<H3>Register no: 212223230074</H3>
+<H3>Ex.No-4</H3>
+<!-- <H3>DATE:</H3> -->
 <H1 ALIGN =CENTER>Implementation of MLP with Backpropagation for Multiclassification</H1>
 <H3>Aim:</H3>
 To implement a Multilayer Perceptron for Multi classification
@@ -97,30 +96,93 @@ In the backward pass,
 
 <H3>Algorithm:</H3>
 
-1. Import the necessary libraries of python.
+#### step 1:
+Import the necessary libraries of python.
 
-2. After that, create a list of attribute names in the dataset and use it in a call to the read_csv() function of the pandas library along with the name of the CSV file containing the dataset.
+#### step 2:
+After that, create a list of attribute names in the dataset and use it in a call to the read_csv() function of the pandas library along with the name of the CSV file containing the dataset.
 
-3. Divide the dataset into two parts. While the first part contains the first four columns that we assign in the variable x. Likewise, the second part contains only the last column that is the class label. Further, assign it to the variable y.
+#### step 3: 
+Divide the dataset into two parts. While the first part contains the first four columns that we assign in the variable x. Likewise, the second part contains only the last column that is the class label. Further, assign it to the variable y.
 
-4. Call the train_test_split() function that further divides the dataset into training data and testing data with a testing data size of 20%.
+#### step 4: 
+Call the train_test_split() function that further divides the dataset into training data and testing data with a testing data size of 20%.
 Normalize our dataset. 
 
-5. In order to do that we call the StandardScaler() function. Basically, the StandardScaler() function subtracts the mean from a feature and scales it to the unit variance.
+#### step 5: 
+In order to do that we call the StandardScaler() function. Basically, the StandardScaler() function subtracts the mean from a feature and scales it to the unit variance.
 
-6. Invoke the MLPClassifier() function with appropriate parameters indicating the hidden layer sizes, activation function, and the maximum number of iterations.
+#### step 6: 
+Invoke the MLPClassifier() function with appropriate parameters indicating the hidden layer sizes, activation function, and the maximum number of iterations.
 
-7. In order to get the predicted values we call the predict() function on the testing data set.
+#### step 7:
+In order to get the predicted values we call the predict() function on the testing data set.
 
-8. Finally, call the functions confusion_matrix(), and the classification_report() in order to evaluate the performance of our classifier.
+#### step 8:
+Finally, call the functions confusion_matrix(), and the classification_report() in order to evaluate the performance of our classifier.
 
 <H3>Program:</H3> 
 
-Insert your code here
+```py
+import pandas as pd
+import sklearn
+from sklearn import preprocessing
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import classification_report, confusion_matrix
+url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'
+names = ['sepal-length', 'sepal-width', 'petal-length', 'petal-width', 'Class']
+irisdata = pd.read_csv(url, names=names)
+X = irisdata.iloc[:, 0:4]
+y = irisdata.select_dtypes(include=[object])
+X.head()
+y.head()
+y.Class.unique()
+le = preprocessing.LabelEncoder()
+y = y.apply(le.fit_transform)
+y.head()
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.20)
+scaler = StandardScaler()
+scaler.fit(X_train)
+X_train = scaler.transform(X_train)
+X_test = scaler.transform(X_test)
+mlp = MLPClassifier(hidden_layer_sizes=(10, 10, 10), max_iter=1000)
+mlp.fit(X_train, y_train.values.ravel())
+predictions = mlp.predict(X_test)
+print(predictions)
+print(confusion_matrix(y_test,predictions))
+print(classification_report(y_test,predictions))
+url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'
+arr = ['SepalLength', 'SepalWidth', 'PetalLength', 'PetalWidth', 'Species']
+df = pd.read_csv(url, names=arr)
+print(df.head())
+a = df.iloc[:, 0:4]
+b = df.select_dtypes(include=[object])
+b = df.iloc[:,4:5]
+training_a, testing_a, training_b, testing_b = train_test_split(a, b, test_size = 0.25)
+myscaler = StandardScaler()
+myscaler.fit(training_a)
+training_a = myscaler.transform(training_a)
+testing_a = myscaler.transform(testing_a)
+m1 = MLPClassifier(hidden_layer_sizes=(12, 13, 14), activation='relu', solver='adam', max_iter=2500)
+m1.fit(training_a, training_b.values.ravel())
+predicted_values = m1.predict(testing_a)
+print(confusion_matrix(testing_b,predicted_values))
+print(classification_report(testing_b,predicted_values))
+```
 
-<H3>Output:</H3>
+### Output:
+#### variables
+![image](https://github.com/user-attachments/assets/bb1f053f-6d75-4a33-bdf3-0bc929280b7c)
 
-Show your results here
+#### label encoded
+![image](https://github.com/user-attachments/assets/37ddaa27-5b5b-4144-98a3-30481b45c90e)
+
+#### final analysis
+![image](https://github.com/user-attachments/assets/f3393527-c301-42bf-b0fd-4d8f98a47808)
+![image](https://github.com/user-attachments/assets/c845f38c-69c6-4a5a-a6d4-cb44441f3b4c)
+
 
 <H3>Result:</H3>
 Thus, MLP is implemented for multi-classification using python.
