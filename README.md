@@ -125,63 +125,72 @@ Finally, call the functions confusion_matrix(), and the classification_report() 
 
 ```py
 import pandas as pd
-import sklearn
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import classification_report, confusion_matrix
-url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'
-names = ['sepal-length', 'sepal-width', 'petal-length', 'petal-width', 'Class']
-irisdata = pd.read_csv(url, names=names)
-X = irisdata.iloc[:, 0:4]
-y = irisdata.select_dtypes(include=[object])
-X.head()
-y.head()
-y.Class.unique()
+
+# Load dataset
+df = pd.read_csv("winequality-red.csv")
+
+# Variables/features and label
+X = df.drop(columns=["quality"])
+y = df["quality"]
+
+print("Variables (first 5 rows):")
+print(X.head())
+
+# Encode labels even though numeric, just to demonstrate encoding step
 le = preprocessing.LabelEncoder()
-y = y.apply(le.fit_transform)
-y.head()
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.20)
+y_encoded = le.fit_transform(y)
+
+print("\nLabel classes:", list(le.classes_))
+print("Encoded labels (first 20):", y_encoded[:20])
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y_encoded, test_size=0.20, random_state=42, stratify=y_encoded
+)
+
+# Normalize
 scaler = StandardScaler()
 scaler.fit(X_train)
 X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
-mlp = MLPClassifier(hidden_layer_sizes=(10, 10, 10), max_iter=1000)
-mlp.fit(X_train, y_train.values.ravel())
+
+# Train MLP
+mlp = MLPClassifier(hidden_layer_sizes=(10, 10, 10), activation="relu", max_iter=1000, random_state=42)
+mlp.fit(X_train, y_train)
+
+# Predict
 predictions = mlp.predict(X_test)
-print(predictions)
-print(confusion_matrix(y_test,predictions))
-print(classification_report(y_test,predictions))
-url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'
-arr = ['SepalLength', 'SepalWidth', 'PetalLength', 'PetalWidth', 'Species']
-df = pd.read_csv(url, names=arr)
-print(df.head())
-a = df.iloc[:, 0:4]
-b = df.select_dtypes(include=[object])
-b = df.iloc[:,4:5]
-training_a, testing_a, training_b, testing_b = train_test_split(a, b, test_size = 0.25)
-myscaler = StandardScaler()
-myscaler.fit(training_a)
-training_a = myscaler.transform(training_a)
-testing_a = myscaler.transform(testing_a)
-m1 = MLPClassifier(hidden_layer_sizes=(12, 13, 14), activation='relu', solver='adam', max_iter=2500)
-m1.fit(training_a, training_b.values.ravel())
-predicted_values = m1.predict(testing_a)
-print(confusion_matrix(testing_b,predicted_values))
-print(classification_report(testing_b,predicted_values))
+
+# Decode predictions back to original quality labels for clarity in analysis
+predicted_labels = le.inverse_transform(predictions)
+y_test_labels = le.inverse_transform(y_test)
+
+# Final analysis
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test_labels, predicted_labels))
+
+print("\nClassification Report:")
+print(classification_report(y_test_labels, predicted_labels))
+
 ```
 
 ### Output:
 #### variables
-![image](https://github.com/user-attachments/assets/bb1f053f-6d75-4a33-bdf3-0bc929280b7c)
+<img width="936" height="465" alt="image" src="https://github.com/user-attachments/assets/cea286f2-81a5-40b6-9443-8d2b494fc81e" />
+
 
 #### label encoded
-![image](https://github.com/user-attachments/assets/37ddaa27-5b5b-4144-98a3-30481b45c90e)
+<img width="938" height="62" alt="image" src="https://github.com/user-attachments/assets/01c2bcb2-9d8a-4ba8-89e9-bfe027530b9e" />
+
 
 #### final analysis
-![image](https://github.com/user-attachments/assets/f3393527-c301-42bf-b0fd-4d8f98a47808)
-![image](https://github.com/user-attachments/assets/c845f38c-69c6-4a5a-a6d4-cb44441f3b4c)
+<img width="919" height="482" alt="image" src="https://github.com/user-attachments/assets/18233610-78cc-4f7d-93fb-11e8f2574c13" />
+
 
 
 <H3>Result:</H3>
